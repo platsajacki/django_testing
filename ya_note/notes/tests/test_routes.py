@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.urls import reverse
-from pytils.translit import slugify
 
 from ..models import Note
 
@@ -31,6 +30,17 @@ class TestRoutes(TestCase):
         urls = (
             'notes:home', 'users:login', 'users:logout', 'users:signup'
         )
+        for name in urls:
+            with self.subTest(name=name):
+                url = reverse(name)
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_pages_availability_auth(self):
+        urls = (
+            'notes:add', 'notes:list', 'notes:success'
+        )
+        self.client.force_login(self.author)
         for name in urls:
             with self.subTest(name=name):
                 url = reverse(name)
@@ -69,10 +79,6 @@ class TestRoutes(TestCase):
                     url = reverse(name, args=(self.note.slug,))
                     response = self.client.get(url)
                     self.assertEqual(response.status_code, status)
-
-    def test_slug_translit(self):
-        translit = slugify(self.TITLE)
-        self.assertEqual(translit, self.note_without_slug.slug)
 
     def test_slug_unique(self):
         with self.assertRaises(IntegrityError):

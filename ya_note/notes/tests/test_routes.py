@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
-from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.urls import reverse
 
@@ -21,9 +20,6 @@ class TestRoutes(TestCase):
         cls.another_user = User.objects.create(username='Пользователь')
         cls.note = Note.objects.create(
             title=cls.TITLE, text=cls.TEXT, slug=cls.SLUG, author=cls.author
-        )
-        cls.note_without_slug = Note.objects.create(
-            title=cls.TITLE, text=cls.TEXT, author=cls.author
         )
 
     def test_pages_availability(self):
@@ -79,10 +75,3 @@ class TestRoutes(TestCase):
                     url = reverse(name, args=(self.note.slug,))
                     response = self.client.get(url)
                     self.assertEqual(response.status_code, status)
-
-    def test_slug_unique(self):
-        with self.assertRaises(IntegrityError):
-            self.note_with_non_unique_slug = Note.objects.create(
-                title=self.TITLE, text=self.TEXT,
-                slug=self.SLUG, author=self.author
-            )

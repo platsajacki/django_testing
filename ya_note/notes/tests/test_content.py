@@ -11,6 +11,7 @@ class TestContent(TestCase):
     TITLE = 'Заметка'
     TEXT = 'Текст'
     SLUG = 'note'
+    SLUG2 = 'note2'
     NOTES_LIST = reverse('notes:list')
     ADD_NOTE_PAGE = reverse('notes:add')
 
@@ -23,7 +24,7 @@ class TestContent(TestCase):
         )
         cls.note_user = Note.objects.create(
             title=cls.TITLE, text=cls.TEXT,
-            slug=cls.SLUG * 2, author=cls.another_user
+            slug=cls.SLUG2, author=cls.another_user
         )
         cls.edit_url = reverse('notes:edit', args=(cls.note_author.slug,))
 

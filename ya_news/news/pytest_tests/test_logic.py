@@ -4,7 +4,7 @@ import pytest
 from django.urls import reverse
 
 from news.models import Comment
-from news.forms import BAD_WORDS
+from news.forms import BAD_WORDS, WARNING
 
 
 @pytest.mark.django_db
@@ -30,8 +30,12 @@ class TestCommentLogic:
     def test_user_cant_use_bad_words(self, author_client, news_pk):
         url = reverse(self.NEWS_DETAIL_PAGE, args=news_pk)
         bad_words_data = {'text': f'Очень плохое слово - {BAD_WORDS[0]}'}
-        author_client.post(url, data=bad_words_data)
+        response = author_client.post(url, data=bad_words_data)
         assert Comment.objects.count() == 0
+        assert 'form' in response.context
+        form = response.context['form']
+        assert 'text' in form.errors
+        assert WARNING in form.errors['text']
 
     class TestCommentEdit:
         COMMENT_EDIT_PAGE = 'news:edit'

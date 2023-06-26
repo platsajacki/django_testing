@@ -1,5 +1,8 @@
-import pytest
+from datetime import timedelta
 
+import pytest
+from django.conf import settings
+from django.utils.timezone import now
 from news.models import Comment, News
 
 
@@ -33,8 +36,7 @@ def comment(news, author):
     comment = Comment.objects.create(
         news=news,
         author=author,
-        text='Текст комментария',
-
+        text='Текст комментария'
     )
     return comment
 
@@ -42,3 +44,15 @@ def comment(news, author):
 @pytest.fixture
 def comment_pk(comment):
     return comment.pk,
+
+
+@pytest.fixture
+def all_news():
+    all_news = [
+        News(
+            title='Заголовок',
+            text='Текст новости',
+            date=now() - timedelta(days=index)
+        ) for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
+    ]
+    return News.objects.bulk_create(all_news)

@@ -33,12 +33,11 @@ def news_pk(news):
 
 @pytest.fixture
 def comment(news, author):
-    comment = Comment.objects.create(
+    return Comment.objects.create(
         news=news,
         author=author,
         text='Текст комментария'
     )
-    return comment
 
 
 @pytest.fixture
@@ -56,3 +55,10 @@ def all_news():
         ) for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
     ]
     return News.objects.bulk_create(all_news)
+
+
+@pytest.fixture
+def form_data():
+    return {
+        'text': 'Комментарий'
+    }

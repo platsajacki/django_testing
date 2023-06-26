@@ -7,7 +7,7 @@ from pytest_django.asserts import assertRedirects
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    ('name', 'args'),
+    'name, args',
     (
         ('news:home', None),
         ('users:login', None),
@@ -23,7 +23,7 @@ def test_pages_availability_for_anonymous_user(client, name, args):
 
 
 @pytest.mark.parametrize(
-    ('name', 'args'),
+    'name, args',
     (
         ('news:edit', pytest.lazy_fixture('comment_pk')),
         ('news:delete', pytest.lazy_fixture('comment_pk'))
@@ -41,7 +41,7 @@ class TestEditDelete:
         assertRedirects(response, expected_url)
 
     @pytest.mark.parametrize(
-        ('parametrized_client, expected_status'),
+        'parametrized_client, expected_status',
         (
             (pytest.lazy_fixture('admin_client'), HTTPStatus.NOT_FOUND),
             (pytest.lazy_fixture('author_client'), HTTPStatus.OK)

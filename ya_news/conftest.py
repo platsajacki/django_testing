@@ -62,3 +62,16 @@ def form_data():
     return {
         'text': 'Комментарий'
     }
+
+
+@pytest.fixture
+def comments(news, author):
+    comments = [
+        Comment(
+            news=news,
+            author=author,
+            text='Текст комментария',
+            created=now() - timedelta(days=index)
+        ) for index in range(2)
+    ]
+    return Comment.objects.bulk_create(comments)

@@ -23,7 +23,8 @@ class TestCommentLogic:
     ):
         url = reverse(self.NEWS_DETAIL_PAGE, args=news_pk)
         before = Comment.objects.count()
-        parametrized_client.post(url, data=form_data)
+        response = parametrized_client.post(url, data=form_data)
+        assert response.status_code == HTTPStatus.FOUND
         after = Comment.objects.count()
         assert (before != after) == expected_status
 
@@ -31,6 +32,7 @@ class TestCommentLogic:
         url = reverse(self.NEWS_DETAIL_PAGE, args=news_pk)
         bad_words_data = {'text': f'Очень плохое слово - {BAD_WORDS[0]}'}
         response = author_client.post(url, data=bad_words_data)
+        assert response.status_code == HTTPStatus.OK
         assert Comment.objects.count() == 0
         assert 'form' in response.context
         form = response.context['form']

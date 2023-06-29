@@ -61,10 +61,12 @@ class TestContent(TestCase):
 
     def test_user_can_edit_their_notes(self):
         response = self.client_author.post(self.edit_url, data=self.form_data)
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.DONE_PAGE)
 
     def test_user_can_delete_their_notes(self):
         response = self.client_author.delete(self.delete_url)
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.DONE_PAGE)
 
     def test_reader_can_edit_their_notes(self):

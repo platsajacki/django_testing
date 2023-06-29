@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -23,11 +25,13 @@ class TestContent(TestCase):
     def test_note_in_list_of_notes(self):
         self.client.force_login(self.author)
         response = self.client.get(self.NOTES_LIST)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertIn(self.note, response.context['object_list'])
 
     def test_elses_note_in_list_of_notes(self):
         self.client.force_login(self.reader)
         response = self.client.get(self.NOTES_LIST)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertNotIn(self.note, response.context['object_list'])
 
     def test_authorized_client_has_form(self):
@@ -35,4 +39,5 @@ class TestContent(TestCase):
         for url in (self.ADD_NOTE_PAGE, self.edit_url):
             with self.subTest(name=url):
                 response = self.client.get(url)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
                 self.assertIn('form', response.context)

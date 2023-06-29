@@ -61,6 +61,7 @@ class TestRoutes(TestCase):
                     url = reverse(name, args=(arg,))
                 redirect_url = f'{login_url}?next={url}'
                 response = self.client.get(url)
+                self.assertEqual(response.status_code, HTTPStatus.FOUND)
                 self.assertRedirects(response, redirect_url)
 
     def test_availability_for_note_edit_and_delete(self):

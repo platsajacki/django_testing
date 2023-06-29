@@ -39,29 +39,8 @@ class TestCommentLogic:
         assert 'text' in form.errors
         assert WARNING in form.errors['text']
 
-    class TestCommentEdit:
-        COMMENT_EDIT_PAGE = 'news:edit'
-
-        def test_author_can_edit_comment(
-                self, author_client, form_data, comment, comment_pk
-        ):
-            url = reverse(self.COMMENT_EDIT_PAGE, args=comment_pk)
-            response = author_client.post(url, data=form_data)
-            assert response.status_code == HTTPStatus.FOUND
-            comment.refresh_from_db()
-            assert comment.text == form_data['text']
-
-        def test_other_user_cant_edit_comment(
-                self, admin_client, form_data, comment, comment_pk
-        ):
-            url = reverse(self.COMMENT_EDIT_PAGE, args=comment_pk)
-            response = admin_client.post(url, data=form_data)
-            assert response.status_code == HTTPStatus.NOT_FOUND
-            comment_from_db = Comment.objects.get(id=comment.id)
-            assert comment.text == comment_from_db.text
-
     @pytest.mark.usefixtures('comment')
-    class TestCommentEditDelete:
+    class TestCommentDelete:
         COMMENT_DELLETE_PAGE = 'news:delete'
 
         def test_author_can_delete_comment(self, author_client, comment_pk):
@@ -77,3 +56,25 @@ class TestCommentLogic:
             response = admin_client.post(url)
             assert response.status_code == HTTPStatus.NOT_FOUND
             assert Comment.objects.count() == 1
+
+
+class TestCommentEdit:
+    COMMENT_EDIT_PAGE = 'news:edit'
+
+    def test_author_can_edit_comment(
+            self, author_client, form_data, comment, comment_pk
+    ):
+        url = reverse(self.COMMENT_EDIT_PAGE, args=comment_pk)
+        response = author_client.post(url, data=form_data)
+        assert response.status_code == HTTPStatus.FOUND
+        comment.refresh_from_db()
+        assert comment.text == form_data['text']
+
+    def test_other_user_cant_edit_comment(
+            self, admin_client, form_data, comment, comment_pk
+    ):
+        url = reverse(self.COMMENT_EDIT_PAGE, args=comment_pk)
+        response = admin_client.post(url, data=form_data)
+        assert response.status_code == HTTPStatus.NOT_FOUND
+        comment_from_db = Comment.objects.get(id=comment.id)
+        assert comment.text == comment_from_db.text

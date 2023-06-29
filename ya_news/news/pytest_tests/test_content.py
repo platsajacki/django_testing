@@ -33,11 +33,10 @@ class TestNewsContent:
 class TestCommentContent:
     NEWS_DETAIL_PAGE = 'news:detail'
 
-    @pytest.mark.usefixtures('comments')
-    def test_comment_order(self):
-        comments = list(Comment.objects.all())
-        sorted_comments = sorted(comments, key=lambda x: x.created)
-        assert comments == sorted_comments
+    def test_comment_order(self, comments):
+        all_comments = list(Comment.objects.all())
+        sorted_comments = sorted(all_comments, key=lambda x: x.created)
+        assert all_comments == sorted_comments
 
     def test_form_not_available_anonymous_user(self, client, news_pk):
         url = reverse(self.NEWS_DETAIL_PAGE, args=news_pk)

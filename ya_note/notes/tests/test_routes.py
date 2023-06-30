@@ -17,7 +17,7 @@ class TestRoutes(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.author = User.objects.create(username='Автор')
-        cls.another_user = User.objects.create(username='Пользователь')
+        cls.reader = User.objects.create(username='Читатель')
         cls.note = Note.objects.create(
             title=cls.TITLE, text=cls.TEXT, slug=cls.SLUG, author=cls.author
         )
@@ -67,11 +67,11 @@ class TestRoutes(TestCase):
     def test_availability_for_note_edit_and_delete(self):
         users_statuses = (
             (self.author, HTTPStatus.OK),
-            (self.another_user, HTTPStatus.NOT_FOUND),
+            (self.reader, HTTPStatus.NOT_FOUND),
         )
         for user, status in users_statuses:
             self.client.force_login(user)
-            for name in ('news:detail', 'notes:edit', 'notes:delete'):
+            for name in ('notes:detail', 'notes:edit', 'notes:delete'):
                 with self.subTest(user=user, name=name):
                     url = reverse(name, args=(self.note.slug,))
                     response = self.client.get(url)

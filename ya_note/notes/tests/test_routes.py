@@ -64,7 +64,7 @@ class TestRoutes(TestCase):
                 self.assertEqual(response.status_code, HTTPStatus.FOUND)
                 self.assertRedirects(response, redirect_url)
 
-    def test_availability_for_note_edit_and_delete(self):
+    def test_availability_for_note_detail_edit_and_delete(self):
         users_statuses = (
             (self.author, HTTPStatus.OK),
             (self.reader, HTTPStatus.NOT_FOUND),

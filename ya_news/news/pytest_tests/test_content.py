@@ -4,8 +4,6 @@ import pytest
 from django.conf import settings
 from django.urls import reverse
 
-from news.models import Comment
-
 
 @pytest.mark.usefixtures('all_news')
 @pytest.mark.django_db
@@ -33,8 +31,11 @@ class TestNewsContent:
 class TestCommentContent:
     NEWS_DETAIL_PAGE = 'news:detail'
 
-    def test_comment_order(self, comments):
-        all_comments = list(Comment.objects.all())
+    def test_comment_order(self, client, comments, news_pk):
+        url = reverse(self.NEWS_DETAIL_PAGE, args=news_pk)
+        response = client.get(url)
+        assert response.status_code == HTTPStatus.OK
+        all_comments = list(response.context['object'].comment_set.all())
         sorted_comments = sorted(all_comments, key=lambda x: x.created)
         assert all_comments == sorted_comments
 

@@ -39,23 +39,25 @@ class TestCommentLogic:
         assert 'text' in form.errors
         assert WARNING in form.errors['text']
 
-    @pytest.mark.usefixtures('comment')
-    class TestCommentDelete:
-        COMMENT_DELLETE_PAGE = 'news:delete'
 
-        def test_author_can_delete_comment(self, author_client, comment_pk):
-            url = reverse(self.COMMENT_DELLETE_PAGE, args=comment_pk)
-            response = author_client.post(url)
-            assert response.status_code == HTTPStatus.FOUND
-            assert Comment.objects.count() == 0
+@pytest.mark.django_db
+@pytest.mark.usefixtures('comment')
+class TestCommentDelete:
+    COMMENT_DELLETE_PAGE = 'news:delete'
 
-        def test_other_user_cant_delete_comment(
-                self, admin_client, comment_pk
-        ):
-            url = reverse(self.COMMENT_DELLETE_PAGE, args=comment_pk)
-            response = admin_client.post(url)
-            assert response.status_code == HTTPStatus.NOT_FOUND
-            assert Comment.objects.count() == 1
+    def test_author_can_delete_comment(self, author_client, comment_pk):
+        url = reverse(self.COMMENT_DELLETE_PAGE, args=comment_pk)
+        response = author_client.post(url)
+        assert response.status_code == HTTPStatus.FOUND
+        assert Comment.objects.count() == 0
+
+    def test_other_user_cant_delete_comment(
+            self, admin_client, comment_pk
+    ):
+        url = reverse(self.COMMENT_DELLETE_PAGE, args=comment_pk)
+        response = admin_client.post(url)
+        assert response.status_code == HTTPStatus.NOT_FOUND
+        assert Comment.objects.count() == 1
 
 
 class TestCommentEdit:
